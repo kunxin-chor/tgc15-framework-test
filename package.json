@@ -1,0 +1,28 @@
+{
+  "name": "tgc15-framework-test",
+  "version": "1.0.0",
+  "description": "![CI logo](https://codeinstitute.s3.amazonaws.com/fullstack/ci_logo_small.png)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kunxin-chor/tgc15-framework-test.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kunxin-chor/tgc15-framework-test/issues"
+  },
+  "homepage": "https://github.com/kunxin-chor/tgc15-framework-test#readme",
+  "dependencies": {
+    "bookshelf": "^1.2.0",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.2",
+    "hbs": "^4.2.0",
+    "knex": "^1.0.2",
+    "wax-on": "^1.2.2"
+  },
+  "devDependencies": {}
+}
