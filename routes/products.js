@@ -1,8 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
-router.get('/', function(req,res){
-    res.send('View all products');
+// import in the model
+const { Product } = require('../models');
+
+router.get('/', async function(req,res){
+    // If we are referring to the Model itself,
+    // we are referring to the table
+    let products = await Product.collection().fetch();
+    res.send(products.toJSON());
 })
 
 router.get('/create', function(req,res){
