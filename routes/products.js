@@ -8,6 +8,15 @@ const { Product } = require('../models');
 // import in creatProductForm and bootstrapField
 const {bootstrapField, createProductForm} = require('../forms');
 
+async function getProductById(productId) {
+    const product = await Product.where({
+        'id': productId
+    }).fetch({
+        'require':false
+    });
+    return product;
+}
+
 // add routes to the routers
 router.get('/', async function(req,res){
     // If we are referring to the Model itself,
@@ -66,11 +75,7 @@ router.get('/:product_id/update', async function(req,res){
    const productId = req.params.product_id;
    // fetch one row from the table
    // using the bookshelf orm
-   const product = await Product.where({
-       'id': productId
-   }).fetch({
-       'require': true
-   })
+   const product = await getProductById(productId);
 
    // create an instance of product form
    const productForm  = createProductForm();
@@ -116,6 +121,19 @@ router.post('/:product_id/update', async function(req,res){
             // invalid entries
         }
     })
+})
+
+router.get('/:product_id/delete', async function(req,res){
+    const product = await getProductById(req.params.product_id);
+    res.render('products/delete',{
+        'product': product.toJSON()
+    })
+})
+
+router.post('/:product_id/delete', async function(req,res){
+    const product = await getProductById(req.params.product_id);
+    await product.destroy();
+    res.redirect('/products');
 })
 
 // export the router
