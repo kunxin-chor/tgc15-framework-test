@@ -28,9 +28,8 @@ const bootstrapField = function (name, object) {
 };
 
 // create one function for each form
-const createProductForm = function(categories){
-    console.log(categories);
-    // the first arg to forms.create() is an
+const createProductForm = function(categories, tags){
+     // the first arg to forms.create() is an
     // object that contains the definition of the form.
     // each property in the object defines one field in the form
     // the property name is the name of the form control
@@ -54,6 +53,12 @@ const createProductForm = function(categories){
             'errorAfterField':true,
             'widget': widgets.select(), // use a dropdown select for this form
             'choices':categories
+        }),
+        "tags": fields.string({
+            'required': true,
+            'errorAfterField':true,
+            'widget': widgets.multipleSelect(),
+            'choices':tags
         })
     })
 }
