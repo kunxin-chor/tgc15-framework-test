@@ -29,8 +29,8 @@ exports.up = function(db) {
       // which column the fk is referring to
       'mapping':'id',
       'rules':{
-        'onDelete':'cascade',
-        'onUpdate':'restrict'
+        'onDelete':'cascade', // if we delete a category, all the products belonging to the category will be deleted
+        'onUpdate':'restrict' // prevent the primary key of a category to be changed
       }
     }
   })

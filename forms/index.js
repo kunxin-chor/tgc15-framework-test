@@ -3,6 +3,7 @@ const forms = require('forms');
 // create some shortcuts
 const fields = forms.fields;
 const validators = forms.validators;
+const widgets = forms.widgets;
 
 // allows Caolan forms to work with bootstrap
 // source: copied from the lab sheet (copied from Github pages for caolan forms)
@@ -27,7 +28,8 @@ const bootstrapField = function (name, object) {
 };
 
 // create one function for each form
-const createProductForm = function(){
+const createProductForm = function(categories){
+    console.log(categories);
     // the first arg to forms.create() is an
     // object that contains the definition of the form.
     // each property in the object defines one field in the form
@@ -45,6 +47,13 @@ const createProductForm = function(){
         "description":fields.string({
             'required': true,
             'errorAfterField':true
+        }),
+        "category_id":fields.string({
+            'label':'Category',
+            'required': true,
+            'errorAfterField':true,
+            'widget': widgets.select(), // use a dropdown select for this form
+            'choices':categories
         })
     })
 }
