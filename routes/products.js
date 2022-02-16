@@ -67,7 +67,7 @@ router.get('/create', async function(req,res){
     res.render('products/create',{
         // convert the form object to HTML
         // and 'format' it using the bootstrapField function
-        'form': productForm.toHTML(bootstrapField)
+        'form': productForm.toHTML(bootstrapField)       
     })
 })
 
@@ -111,6 +111,11 @@ router.post('/create', async function(req,res){
                 await newProduct.tags().attach(selectedTags);
             }
 
+            // flash messages can ONLY be used before a redirect
+            req.flash('success_messages', 'Product created successfully')  // <-- we call the req.flash() function of the app.use(flash()) in index.js
+            
+            // a redirect sends a response back to the browser
+            // tell it to visit the URL in the first argument
             res.redirect('/products');
         },
         // the function associated with 'error' will be
