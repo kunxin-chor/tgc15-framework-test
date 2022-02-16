@@ -64,12 +64,15 @@ app.use(function(req,res,next){
 // import in routes
 const landingRoutes = require('./routes/landing');
 const productRoutes = require('./routes/products');
+const userRoutes = require('./routes/users');
+
 
 async function main() {
     app.use('/', landingRoutes);
     // the first parameter is the prefix
     // the second parameter is the router object
     app.use('/products', productRoutes);
+    app.use('/users', userRoutes);
 }
 
 main();

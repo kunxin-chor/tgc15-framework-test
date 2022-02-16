@@ -41,4 +41,10 @@ const Tag = bookshelf.model("Tag", {
     }
 } )
 
-module.exports = { Product, Category, Tag };
+// first arg is the name of the model, and it must be singular form of the
+// table name, with the first alphabet in uppercase.
+const User = bookshelf.model("User", {
+    'tableName':'users'
+})
+
+module.exports = { Product, Category, Tag, User };
