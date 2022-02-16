@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();  // create a new router object
 
-const { createUserForm, bootstrapField } = require('../forms');
+const { createUserForm, bootstrapField, createLoginForm } = require('../forms');
 const { User } = require('../models');
 
 router.get('/register', function(req,res){
@@ -37,7 +37,49 @@ router.post('/register', function(req,res){
 })
 
 router.get('/login', function(req,res){
-    res.render('users/login');
+    const loginForm = createLoginForm();
+    res.render('users/login',{
+        'form': loginForm.toHTML(bootstrapField)
+    });
+})
+
+router.post('/login', function(req,res){
+    const loginForm = createLoginForm();
+    loginForm.handle(req, {
+        'success': async function(form) {
+
+            // check if the user with the provided email exists or not
+            let user = await User.where({
+                'email': form.data.email}
+            ).fetch({
+                require: false
+            })
+
+            // if user is not found
+            if (!user) {
+                req.flash('error_messages', "Sorry your authentication details are incorrect");
+                res.redirect('/users/login')
+            } else {
+                // if the user is found, make sure that the password matches
+                // user.get('password') --> is the password from the row in the table
+                // form.data.password --> is the password that the user types into the form
+                if (user.get('password') == form.data.password) {
+
+                    // save the user in the session
+                    // req.session: allows to add data to the session file, or to change data in the session file
+                    req.session.user = {
+                        id: user.get('id'),
+                        username: user.get('username')
+                    }
+                    req.flash("success_messages", "Login successful!")
+                    res.redirect('/');
+                } else {
+                    req.flash('error_messages', "Sorry your authentication details are incorrect")
+                    res.redirect('/login')
+                }
+            }
+        }
+    })
 })
 
 // export out the router object

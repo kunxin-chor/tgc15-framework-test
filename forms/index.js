@@ -88,4 +88,18 @@ const createUserForm = function() {
     })
 }
 
-module.exports = {bootstrapField, createProductForm, createUserForm};
+const createLoginForm = function() {
+    return forms.create({
+        'email': fields.string({
+            required: true,
+            errorAfterField: true
+        }),
+        'password': fields.string({
+            required: true,
+            errorAfterField: true,
+            widget: widgets.password()
+        })
+    })
+}
+
+module.exports = {bootstrapField, createProductForm, createUserForm, createLoginForm};
