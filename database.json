@@ -1,8 +1,8 @@
 {
     "dev": {
-        "driver":"mysql",
-        "user":"foo",
-        "password":"bar",
-        "database":"organic"
+        "driver":{"ENV":"DB_DRIVER"},
+        "user":{"ENV":"DB_USER"},
+        "password":{"ENV":"DB_PASSWORD"},
+        "database":{"ENV":"DB_DATABASE"}
     }
 }
