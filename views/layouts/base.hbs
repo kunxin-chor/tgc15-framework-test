@@ -21,6 +21,14 @@
           {{/each}}
         {{/if}}
 
+        {{#if error_messages}} 
+          {{#each error_messages }}
+          <div class="alert alert-danger">
+            {{this}}
+          </div>
+          {{/each}}
+        {{/if}}
+
         {{#block 'content'}}{{/block}}
          <div style="font-size:0.8em" class="mt-3">
             Generated on {{date}}

@@ -52,13 +52,18 @@ router.post('/login', function(req,res){
             let user = await User.where({
                 'email': form.data.email}
             ).fetch({
-                require: false
+                require: false  // we set require to false
+                                // we don't bookshelf to throw an error
+                                // if the user is not found
+                                // because we want to handle the error
+                                // ourselves
             })
 
             // if user is not found
             if (!user) {
                 req.flash('error_messages', "Sorry your authentication details are incorrect");
-                res.redirect('/users/login')
+                res.redirect('/users/login');
+                return; // immediately end the function after redirect
             } else {
                 // if the user is found, make sure that the password matches
                 // user.get('password') --> is the password from the row in the table
@@ -74,8 +79,9 @@ router.post('/login', function(req,res){
                     req.flash("success_messages", "Login successful!")
                     res.redirect('/');
                 } else {
-                    req.flash('error_messages', "Sorry your authentication details are incorrect")
-                    res.redirect('/login')
+                    // flash messages must go before a redirect
+                    req.flash('error_messages', "Sorry your authentication details are incorrect");
+                    res.redirect('/users/login')
                 }
             }
         }
