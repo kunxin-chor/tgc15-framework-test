@@ -59,6 +59,9 @@ const createProductForm = function(categories, tags){
             'errorAfterField':true,
             'widget': widgets.multipleSelect(),
             'choices':tags
+        }),
+        "image_url": fields.string({
+            'widget': widgets.hidden() // invisible
         })
     })
 }

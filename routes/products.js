@@ -70,7 +70,11 @@ router.get('/create',checkIfAuthenticated , async function(req,res){
     res.render('products/create',{
         // convert the form object to HTML
         // and 'format' it using the bootstrapField function
-        'form': productForm.toHTML(bootstrapField)       
+        'form': productForm.toHTML(bootstrapField),
+        'cloudinaryName':process.env.CLOUDINARY_NAME,
+        'cloudinaryApiKey':process.env.CLOUDINARY_API_KEY,
+        'cloudinaryUploadPreset':process.env.CLOUDINARY_UPLOAD_PRESET
+
     })
 })
 
@@ -101,7 +105,8 @@ router.post('/create', checkIfAuthenticated, async function(req,res){
             newProduct.set('name', form.data.name);
             newProduct.set('cost', form.data.cost);
             newProduct.set('description', form.data.description);
-            newProduct.set('category_id', form.data.category_id);          
+            newProduct.set('category_id', form.data.category_id);  
+            newProduct.set('image_url', form.data.image_url)        ;
   
             await newProduct.save();
 
