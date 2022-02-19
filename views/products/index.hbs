@@ -1,6 +1,13 @@
 {{#extends 'base'}}
 
 {{#block "content"}}
+
+<h3>Search:</h3>
+<form method="GET">
+    {{{searchForm}}}
+    <input type="submit" class="btn btn-primary mt-3" value="Search"/>
+</form>
+
 <table class="table">
     <thead>
         <tr>
@@ -8,6 +15,7 @@
             <th>Name</th>
             <th>Price</th>
             <th>Category</th>
+            <th>Tags</th>
             <th>Image</th>
             <th></th>
         </tr>
@@ -26,6 +34,11 @@
             </td>
             <td>
                 {{this.category.name}}
+            </td>
+            <td>
+                {{#each this.tags}}
+                    <span class="badge bg-primary">{{this.name}}</span>
+                {{/each}}
             </td>
             <td>
                 {{#if this.image_url}}

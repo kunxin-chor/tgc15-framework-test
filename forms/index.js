@@ -105,4 +105,34 @@ const createLoginForm = function() {
     })
 }
 
-module.exports = {bootstrapField, createProductForm, createUserForm, createLoginForm};
+
+const createSearchForm = function(allCategories, allTags) {
+    return forms.create({
+        'name': fields.string({
+            required: false 
+        }),
+        'min_cost':fields.string({
+            required: false,
+            errorAfterField: true,
+            validators:[validators.integer(), validators.min(0)]
+        }),
+        'max_cost':fields.string({
+            required: false,
+            errorAfterField: true,
+            validators:[validators.integer(), validators.min(0)]
+        }),
+        'category_id':fields.string({
+            label:'Category',
+            required: false,
+            widget: widgets.select(),
+            choices: allCategories
+        }),
+        'tags': fields.string({
+            required: false,
+            widget: widgets.multipleSelect(),
+            choices: allTags
+        })
+    })
+}
+
+module.exports = {bootstrapField, createProductForm, createUserForm, createLoginForm, createSearchForm};

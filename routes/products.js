@@ -6,7 +6,7 @@ const router = express.Router();
 const { Product, Category, Tag } = require('../models');
 
 // import in creatProductForm and bootstrapField
-const {bootstrapField, createProductForm} = require('../forms');
+const {bootstrapField, createProductForm, createSearchForm} = require('../forms');
 
 const { checkIfAuthenticated} = require('../middlewares');
 
@@ -21,20 +21,81 @@ async function getProductById(productId) {
 }
 
 // add routes to the routers
-router.get('/', async function(req,res){
-    // If we are referring to the Model itself,
-    // we are referring to the table
-    let products = await Product.collection().fetch({
-        withRelated:['category'] // fetch the category row that is related to the product as well
-                                 // the argument takes in the relationship name
-    }); // => select * from products
-    
-    console.log(products.toJSON());
 
-    res.render('products/index',{
-        'products': products.toJSON() // impt! make sure to call .toJSON() on
-                                      // the results
+// list all the products
+router.get('/', async function(req,res){
+
+    // get all the categories
+    const allCategories = await Category.fetchAll().map(function(category){
+        return [category.get('id'), category.get('name')]
     })
+
+    allCategories.unshift([0, "N/A"]);
+
+    const allTags = await Tag.fetchAll().map(function(tag){
+        return [tag.get('id'), tag.get('name')];
+    })
+
+ 
+    const searchForm = createSearchForm(allCategories, allTags);
+    let query = Product.collection(); // create a query builder
+                                      // write a query in increments
+                                      // eqv. "SELECT * FROM products"
+    searchForm.handle(req,{
+        'empty':async function(form) {
+            // if the user never fill in, we just return all products
+            let products = await query.fetch({
+                withRelated:['category', 'tags']
+            })
+            res.render('products/index', {
+                'products': products.toJSON(),
+                'searchForm': form.toHTML(bootstrapField)
+            })
+        },
+        'success':async function(form) {
+            // if the name is provided
+            if (form.data.name) {
+                // add on the query
+                // adding to "WHERE name LIKE '%product_name%'"" to "SELECT * FROM products"                
+                query.where('name', 'like', '%' + req.query.name + '%');
+            }
+
+            if (form.data.min_cost) {
+                query.where('cost', '>=', form.data.min_cost);
+            }
+
+            if (form.data.max_cost) {
+                query.where('cost', '<=', form.data.max_cost);
+            }
+
+            if (form.data.category_id && form.data.category_id != "0") {
+                query.where('category_id', '=', form.data.category_id)
+            }
+
+            if (form.data.tags) {
+                // query.query
+                // [a]   [b]
+                // a => query builder
+                // b => a function named query()
+
+                // join the products with products_tags
+                // 2nd arg -> the table to join with
+                // 3rd arg -> the primary key of left hand side table
+                // 4th arg -> the fk of ther right hand side table
+                query.query('join', 'products_tags', 'products.id','product_id')
+                    .where('tag_id','in', form.data.tags.split(','));
+            }            
+
+            // execute the query
+            let products = await query.fetch({
+                withRelated:['category', 'tags']
+            })
+            res.render('products/index', {
+                'products': products.toJSON(),
+                'searchForm': form.toHTML(bootstrapField)
+            })
+        }
+    })   
 })
 
 // add checkIfAuthenticated middleware for this route
