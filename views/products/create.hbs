@@ -55,6 +55,8 @@
             // set the value of the hidden form field `image_url` to be
             // the URL of the uploaded image
             document.querySelector('#id_image_url').value = url;
+            document.querySelector("#uploaded-image").src = url;
+            document.querySelector("#uploaded-image").style.display="block";
         }
     });
 

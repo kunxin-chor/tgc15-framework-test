@@ -4,9 +4,71 @@
 <h1>Updating product {{product.name}}</h1>
 <form method="POST">
     {{{form}}}
+    <div class="mt-3">
+    <!-- display the product image (if it exists) -->
+    {{#if product.image_url}} 
+        <img src="{{product.image_url}}" id="uploaded-image"/>
+    {{else}}
+        <img src="" style="display:none" id="uploaded-image"/>
+    {{/if}}
+    <!-- display the widget button -->
+    <a href="#" class="btn btn-primary" id="upload-widget">Upload</a>
+    </div>
+
     <input type="submit" class="btn btn-primary mt-3"/>
     <input type="hidden" name="_csrf" value="{{csrfToken}}"/>
 </form>
+{{/block}}
+
+{{#block "js"}}
+<!-- initialise cloudinary -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous"></script>
+
+<script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
+
+<script>
+    async function generateSignature(callback, params_to_sign) {
+        // first get the signature from our express application
+        let response = await axios.get('/cloudinary/sign',{
+            'params': {
+                'params_to_sign': params_to_sign
+            }
+        })
+        callback(response.data);
+    }
+
+    // create the upload widget
+    // the cloudinary object exists because we include the
+    // cloudinary widget javascript file above.
+    let cloudinaryConfig = {
+        'cloudName': "{{cloudinaryName}}",
+        'apiKey': "{{cloudinaryApiKey}}",
+        'uploadPreset':"{{cloudinaryUploadPreset}}",
+        'uploadSignature':generateSignature
+    }
+    // createUploadWidget function takes two arguments:
+    // first arg: config information
+    // second arg: a function that is executed by the widget when the upload has finished
+    const myWidget = cloudinary.createUploadWidget(cloudinaryConfig, function(error, result){
+        // check if there is no error and there is a result, and the event of the result
+        // is a successful upload
+        if (!error && result && result.event == 'success') {
+            console.log(result);
+            let url = result.info.secure_url;
+            // set the value of the hidden form field `image_url` to be
+            // the URL of the uploaded image
+            document.querySelector('#id_image_url').value = url;
+            document.querySelector("#uploaded-image").src = url;
+            document.querySelector("#uploaded-image").style.display="block";
+        }
+    });
+
+    document.querySelector('#upload-widget').addEventListener('click', function(){
+        myWidget.open(); // display the upload widget
+    }, false);
+
+</script>
+
 {{/block}}
 
 {{/extends}}

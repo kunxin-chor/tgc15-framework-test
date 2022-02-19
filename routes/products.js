@@ -162,6 +162,7 @@ router.get('/:product_id/update', checkIfAuthenticated, async function(req,res){
    productForm.fields.cost.value = product.get('cost');
    productForm.fields.description.value = product.get('description');
    productForm.fields.category_id.value = product.get('category_id');
+   productForm.fields.image_url.value = product.get('image_url');
 
    // get only the ids from the tags that belongs to the product
    const selectedTags = await product.related('tags').pluck('id');
@@ -170,7 +171,10 @@ router.get('/:product_id/update', checkIfAuthenticated, async function(req,res){
 
    res.render('products/update',{
        'form': productForm.toHTML(bootstrapField),
-       'product': product.toJSON()
+       'product': product.toJSON(),
+       'cloudinaryName':process.env.CLOUDINARY_NAME,
+       'cloudinaryApiKey':process.env.CLOUDINARY_API_KEY,
+       'cloudinaryUploadPreset':process.env.CLOUDINARY_UPLOAD_PRESET
    })
 })
 
