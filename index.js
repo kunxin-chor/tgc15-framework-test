@@ -1,6 +1,8 @@
 const express = require("express");
 const hbs = require("hbs");
 const wax = require("wax-on");
+const crpyto = require('crypto'); // already exists as part of nodejs
+                                  // we don't have to yarn add
 require("dotenv").config();
 
 

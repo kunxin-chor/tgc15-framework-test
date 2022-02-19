@@ -1,8 +1,17 @@
 const express = require('express');
 const router = express.Router();  // create a new router object
+const crypto = require('crypto'); // already exists as part of nodejs
 
 const { createUserForm, bootstrapField, createLoginForm } = require('../forms');
 const { User } = require('../models');
+
+function getHashedPassword(password){
+    // create a sha256 hashing algo
+    const sha256 = crypto.createHash('sha256');
+    // create the hash as hexdecimal
+    const hash = sha256.update(password).digest('base64');
+    return hash;
+}
 
 router.get('/register', function(req,res){
     const form = createUserForm();
@@ -19,7 +28,7 @@ router.post('/register', function(req,res){
             // an instance of a model refers to one row in the table
             const user = new User({
                 'username': form.data.username,
-                'password': form.data.password,
+                'password': getHashedPassword(form.data.password),
                 'email': form.data.email
             })
 
@@ -68,7 +77,7 @@ router.post('/login', function(req,res){
                 // if the user is found, make sure that the password matches
                 // user.get('password') --> is the password from the row in the table
                 // form.data.password --> is the password that the user types into the form
-                if (user.get('password') == form.data.password) {
+                if (user.get('password') == getHashedPassword(form.data.password)) {
 
                     // save the user in the session
                     // req.session: allows to add data to the session file, or to change data in the session file
