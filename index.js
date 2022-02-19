@@ -1,8 +1,8 @@
 const express = require("express");
 const hbs = require("hbs");
 const wax = require("wax-on");
-
-                                  // we don't have to yarn add
+const csrf = require('csurf'); // protection vs. CRSF attacks
+      
 require("dotenv").config();
 
 
@@ -32,8 +32,6 @@ app.use(
     extended: false
   })
 );
-
-
 
 // inject date for all hbs files
 // middleware to inject the current date
@@ -79,6 +77,34 @@ app.use(function(req,res,next){
                                        // the user object from the client's session
   next(); // MUST call next() or else your express app will just hang with no error messages
 })
+
+// app.use(function(req,res,next){
+//   console.log(req.body);
+//   next();
+// })
+
+// add in csrf protection
+app.use(csrf());
+
+// check if there is a csrf error. If so, render a friendly error message
+app.use(function(err, req, res, next){
+   // check for bad csrf token error
+  if (err && err.code == "EBADCSRFTOKEN") {
+    req.flash('error_messages', 'The form has expired. Please try again.');
+    res.redirect('back'); // 'back' means tell the browser go back to previous page
+  } else {
+    next();
+  }
+})
+
+// share the csrf token with all hbs files
+app.use(function(req,res,next){
+  res.locals.csrfToken = req.csrfToken();  // req.csrfToken() is available
+                                           // after we do `app.use(csrf())`
+  next();
+})
+
+
 
 // import in routes
 const landingRoutes = require('./routes/landing');
