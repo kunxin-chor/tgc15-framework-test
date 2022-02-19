@@ -8,6 +8,8 @@ const { Product, Category, Tag } = require('../models');
 // import in creatProductForm and bootstrapField
 const {bootstrapField, createProductForm} = require('../forms');
 
+const { checkIfAuthenticated} = require('../middlewares');
+
 async function getProductById(productId) {
     const product = await Product.where({
         'id': productId
@@ -35,9 +37,10 @@ router.get('/', async function(req,res){
     })
 })
 
-router.get('/create', async function(req,res){
+// add checkIfAuthenticated middleware for this route
+router.get('/create',checkIfAuthenticated , async function(req,res){
 
-    /* below is an example of how the choices for 
+     /* below is an example of how the choices for 
     dropdown select should look like:
     * it's an array of array.
     * each inner array represent a choice
@@ -71,7 +74,7 @@ router.get('/create', async function(req,res){
     })
 })
 
-router.post('/create', async function(req,res){
+router.post('/create', checkIfAuthenticated, async function(req,res){
     // goal: create a new product based on the input in the forms
 
     const allCategories = await Category.fetchAll().map(function(category){
@@ -129,7 +132,7 @@ router.post('/create', async function(req,res){
     })
 })
 
-router.get('/:product_id/update', async function(req,res){
+router.get('/:product_id/update', checkIfAuthenticated, async function(req,res){
   
     // get all the possible categories from the database
     const allCategories = await Category.fetchAll().map(function(category){
@@ -166,7 +169,7 @@ router.get('/:product_id/update', async function(req,res){
    })
 })
 
-router.post('/:product_id/update', async function(req,res){
+router.post('/:product_id/update', checkIfAuthenticated, async function(req,res){
     // fetch the instance of the product that we wish to update
     const product = await Product.where({
         'id': req.params.product_id
@@ -229,14 +232,14 @@ router.post('/:product_id/update', async function(req,res){
     })
 })
 
-router.get('/:product_id/delete', async function(req,res){
+router.get('/:product_id/delete', checkIfAuthenticated, async function(req,res){
     const product = await getProductById(req.params.product_id);
     res.render('products/delete',{
         'product': product.toJSON()
     })
 })
 
-router.post('/:product_id/delete', async function(req,res){
+router.post('/:product_id/delete', checkIfAuthenticated, async function(req,res){
     const product = await getProductById(req.params.product_id);
     await product.destroy(); // same as "DELETE FROM products where id = ?"
     res.redirect('/products');

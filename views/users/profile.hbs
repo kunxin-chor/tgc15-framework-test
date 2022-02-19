@@ -1,0 +1,15 @@
+{{#extends 'base'}}
+
+{{#block "content"}}
+<h1>Your Profile</h1>
+<ul>
+    <li>User ID: {{user.id}}</li>
+    <li>Email: {{user.email}}</li>
+    <li>Username: {{user.username}}</li>
+</ul>
+
+<a href="/users/logout" class="btn btn-danger">Logout</a>
+
+{{/block}}
+
+{{/extends}}

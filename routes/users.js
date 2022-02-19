@@ -97,5 +97,38 @@ router.post('/login', function(req,res){
     })
 })
 
+// GET /users/profile to display the user's information
+router.get('/profile', async function(req,res){
+    // how do we get the current logged in user?
+    // req.session -> refers to the session file for 
+    //                the client visitng the route
+    // req.session.user -> refer to the user object
+    //                     in the current client's session
+    //                     file
+    if (req.session.user) {
+        // get the user row from the database
+        // by the id in the session file
+        const user = await User.where({
+            'id': req.session.user.id
+        }).fetch({
+            require: true
+        })
+
+        res.render('users/profile', {
+            'user': user.toJSON()
+        })
+    } else{
+        req.flash('error_messages', 'You need to login first');
+        res.redirect('/users/login');
+    }
+})
+
+router.get('/logout', function(req,res){
+    // destroy the session for the client accessing this route
+    req.session.user = null;
+    req.flash('success_messages', "Goodbye!");
+    res.redirect('/users/login');
+});
+
 // export out the router object
 module.exports = router;

@@ -1,7 +1,7 @@
 const express = require("express");
 const hbs = require("hbs");
 const wax = require("wax-on");
-const crpyto = require('crypto'); // already exists as part of nodejs
+
                                   // we don't have to yarn add
 require("dotenv").config();
 
@@ -25,13 +25,19 @@ wax.on(hbs.handlebars);
 wax.setLayoutPath("./views/layouts");
 
 // enable forms
+// this is a middleware that enables us to
+// access to form data in req.body
 app.use(
   express.urlencoded({
     extended: false
   })
 );
 
+
+
 // inject date for all hbs files
+// middleware to inject the current date
+//  as variable in all hbs files.
 app.use(function(req,res,next){
   res.locals.date = new Date();  // res.locals is response.locals
                                  // the locals object contain the variables for the hbs file
@@ -61,6 +67,17 @@ app.use(function(req,res,next){
   res.locals.success_messages = req.flash('success_messages');
   res.locals.error_messages = req.flash('error_messages');
   next();
+})
+
+// global middleware - it is applied to all routes
+// inject the current logged in user to hbs files
+app.use(function(req,res,next){
+  // res.locals is an object
+  // res.locals.user is to add a new property named 'user' to the object
+  res.locals.user = req.session.user;  // in hbs file,
+                                       // we are able to access
+                                       // the user object from the client's session
+  next(); // MUST call next() or else your express app will just hang with no error messages
 })
 
 // import in routes
