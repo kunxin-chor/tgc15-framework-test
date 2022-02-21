@@ -10,15 +10,7 @@ const {bootstrapField, createProductForm, createSearchForm} = require('../forms'
 
 const { checkIfAuthenticated} = require('../middlewares');
 
-async function getProductById(productId) {
-    const product = await Product.where({
-        'id': productId
-    }).fetch({
-        'require':false,
-        withRelated:['tags'] // fetch all the tags associated with the product
-    });
-    return product;
-}
+const productDataLayer = require('../dal/products');
 
 // add routes to the routers
 
@@ -26,16 +18,10 @@ async function getProductById(productId) {
 router.get('/', async function(req,res){
 
     // get all the categories
-    const allCategories = await Category.fetchAll().map(function(category){
-        return [category.get('id'), category.get('name')]
-    })
-
+    const allCategories = await productDataLayer.getAllCategories();
     allCategories.unshift([0, "N/A"]);
 
-    const allTags = await Tag.fetchAll().map(function(tag){
-        return [tag.get('id'), tag.get('name')];
-    })
-
+    const allTags = await productDataLayer.getAllTags();
  
     const searchForm = createSearchForm(allCategories, allTags);
     let query = Product.collection(); // create a query builder
@@ -116,14 +102,8 @@ router.get('/create',checkIfAuthenticated , async function(req,res){
         ]
     */
  
-
-    const allCategories = await Category.fetchAll().map(function(category){
-        return [ category.get('id'), category.get('name')]
-    });
-
-    const allTags = await Tag.fetchAll().map(function(tag){
-        return [ tag.get('id'), tag.get('name')]
-    })
+    const allCategories = await productDataLayer.getAllCategories();
+    const allTags = await productDataLayer.getAllTags();
 
     const productForm = createProductForm(allCategories, allTags);
   
@@ -142,13 +122,9 @@ router.get('/create',checkIfAuthenticated , async function(req,res){
 router.post('/create', checkIfAuthenticated, async function(req,res){
     // goal: create a new product based on the input in the forms
 
-    const allCategories = await Category.fetchAll().map(function(category){
-        return [ category.get('id'), category.get('name')]
-    });
+    const allCategories = await productDataLayer.getAllCategories();
 
-    const allTags = await Tag.fetchAll().map(function(tag){
-        return [ tag.get('id'), tag.get('name')]
-    })
+    const allTags = await productDataLayer.getAllTags();
 
     // create an instance of the product form
     const productForm = createProductForm(allCategories, allTags);
@@ -162,14 +138,7 @@ router.post('/create', checkIfAuthenticated, async function(req,res){
             // create a new instance of the Product model
             // NOTE: an instance of a model refers to ONE row
             // inside the table
-            const newProduct = new Product();
-            newProduct.set('name', form.data.name);
-            newProduct.set('cost', form.data.cost);
-            newProduct.set('description', form.data.description);
-            newProduct.set('category_id', form.data.category_id);  
-            newProduct.set('image_url', form.data.image_url)        ;
-  
-            await newProduct.save();
+            const newProduct = await productDataLayer.createProduct(form.data)
 
            // create the product first, then save the tags
            // beause we need the product to attach the tags
@@ -201,19 +170,15 @@ router.post('/create', checkIfAuthenticated, async function(req,res){
 router.get('/:product_id/update', checkIfAuthenticated, async function(req,res){
   
     // get all the possible categories from the database
-    const allCategories = await Category.fetchAll().map(function(category){
-        return [ category.get('id'), category.get('name')]
-    });
+    const allCategories = await productDataLayer.getAllCategories();
 
     // get all the possible tags
-    const allTags = await Tag.fetchAll().map(function(tag){
-        return [ tag.get('id'), tag.get('name')]
-    })
+    const allTags = await productDataLayer.getAllTags();
 
     const productId = req.params.product_id;
    // fetch one row from the table
    // using the bookshelf orm
-   const product = await getProductById(productId);
+   const product = await productDataLayer.getProductById(productId);
 
    // create an instance of product form
    const productForm  = createProductForm(allCategories, allTags);
@@ -241,22 +206,12 @@ router.get('/:product_id/update', checkIfAuthenticated, async function(req,res){
 
 router.post('/:product_id/update', checkIfAuthenticated, async function(req,res){
     // fetch the instance of the product that we wish to update
-    const product = await Product.where({
-        'id': req.params.product_id
-    }).fetch({
-        require: true,
-        withRelated:['tags']    
-    })
-
+    const product = await getProductById(req.params.product_id);
     // get all the categories
-    const allCategories = await Category.fetchAll().map(function(category){
-        return [ category.get('id'), category.get('name')]
-    });
+    const allCategories = await productDataLayer.getAllCategories();
 
     // get all the tags
-    const allTags = await Tag.fetchAll().map(function(tag){
-        return [ tag.get('id'), tag.get('name')]
-    })
+    const allTags = await productDataLayer.getAllTags();
 
     // create the product form
     const productForm = createProductForm(allCategories, allTags);
