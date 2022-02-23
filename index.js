@@ -84,7 +84,15 @@ app.use(function(req,res,next){
 // })
 
 // add in csrf protection
-app.use(csrf());
+// app.use(csrf());
+const csrfInstance = csrf();
+app.use(function(req,res,next){
+  if (req.url === '/checkout/process_payment') {
+    return next(); // skip csrf check if the route is for webhook
+  } else {
+    csrfInstance(req,res,next);
+  }
+})
 
 // check if there is a csrf error. If so, render a friendly error message
 app.use(function(err, req, res, next){
@@ -99,8 +107,12 @@ app.use(function(err, req, res, next){
 
 // share the csrf token with all hbs files
 app.use(function(req,res,next){
-  res.locals.csrfToken = req.csrfToken();  // req.csrfToken() is available
-                                           // after we do `app.use(csrf())`
+  // check if the current request has csrf enabled or not
+  if (req.csrfToken) {
+    res.locals.csrfToken = req.csrfToken();  // req.csrfToken() is available
+    // after we do `app.use(csrf())`
+  }
+
   next();
 })
 

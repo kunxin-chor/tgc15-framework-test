@@ -72,8 +72,35 @@ router.get('/', async function(req,res){
      res.render('checkout/cancel')
  })
 
- router.post('/process_payment', function(req,res){
-     
+ router.post('/process_payment', express.raw({
+     'type':'application/json'
+ }), function(req,res){
+     let payload = req.body; // payload is whatever Stripe is sending us
+     let endpointSecret = process.env.STRIPE_ENDPOINT_SECRET;
+     let sigHeader = req.headers['stripe-signature'];
+     let event;
+     try {
+        // if there is no error, event should contains detail of the payment
+         event = Stripe.webhooks.constructEvent(payload, sigHeader, endpointSecret);
+    
+    
+     } catch (e) {
+         res.send({
+             'error': e.message
+         })
+         console.log(e);
+     }
+     // check if the event is payment completed
+     if (event.type == 'checkout.session.completed') {
+        // retrieve the stripe session
+        let stripeSession = event.data.object;
+        console.log(stripeSession);
+        let orders = JSON.parse(stripeSession.metadata.orders);
+        console.log(orders);
+     }
+     res.send({
+         'recieved': true
+     })
  })
 
 module.exports = router;
