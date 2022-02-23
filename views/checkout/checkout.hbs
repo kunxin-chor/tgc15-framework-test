@@ -1,0 +1,9 @@
+<script src="https://js.stripe.com/v3"></script>
+<script type="text/javascript">
+const stripe = Stripe('{{publishableKey}}');
+
+// brings the browser to the checkout page
+stripe.redirectToCheckout({
+    'sessionId':'{{sessionId}}'
+})
+</script>
