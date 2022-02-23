@@ -49,8 +49,8 @@ router.get('/', async function(req,res){
    const payment = {
        'payment_method_types':['card'],
        'line_items': lineItems,
-       'success_url':'http://www.google.com',
-       'cancel_url':'http://www.yahoo.com',
+       'success_url':process.env.STRIPE_SUCCESS_URL,
+       'cancel_url':process.env.STRIPE_CANCEL_URL,
        'metadata':{
            'orders':metaData
        }    
@@ -62,5 +62,18 @@ router.get('/', async function(req,res){
        'publishableKey': process.env.STRIPE_PUBLISHABLE_KEY
    })
 })
+
+ router.get('/success/:sessionId', function(req,res){
+     console.log(req.params.sessionId);
+     res.render('checkout/success')
+ })
+
+ router.get('/cancel', function(req,res){
+     res.render('checkout/cancel')
+ })
+
+ router.post('/process_payment', function(req,res){
+     
+ })
 
 module.exports = router;
