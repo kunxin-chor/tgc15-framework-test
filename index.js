@@ -87,7 +87,8 @@ app.use(function(req,res,next){
 // app.use(csrf());
 const csrfInstance = csrf();
 app.use(function(req,res,next){
-  if (req.url === '/checkout/process_payment') {
+  if (req.url === '/checkout/process_payment' || 
+      req.url.slice(0,5)==='/api/') {
     return next(); // skip csrf check if the route is for webhook
   } else {
     csrfInstance(req,res,next);
@@ -127,7 +128,8 @@ const cartRoutes = require('./routes/cart');
 const checkoutRoutes = require('./routes/checkout');
 
 const api = {
-  'products': require('./routes/api/products')
+  'products': require('./routes/api/products'),
+  'users': require('./routes/api/users')
 }
 
 async function main() {
@@ -141,7 +143,9 @@ async function main() {
     app.use('/checkout', checkoutRoutes);
 
     // register API routes
-    app.use('/api/products', api.products);
+    // all API routes will have urls that begin with '/api/'
+    app.use('/api/products', express.json(), api.products);
+    app.use('/api/users', express.json(), api.users);
 }
 
 main();
