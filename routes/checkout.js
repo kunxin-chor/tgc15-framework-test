@@ -97,6 +97,10 @@ router.get('/', async function(req,res){
         console.log(stripeSession);
         let orders = JSON.parse(stripeSession.metadata.orders);
         console.log(orders);
+        // 1. create a model to represent each invoice item
+        // - create migration file
+        // - create the models
+        // 2. for each line item, store the quantity ordered and associated product iod
      }
      res.send({
          'recieved': true

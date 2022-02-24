@@ -21,8 +21,25 @@ FLUSH PRIVILEGES;
 
 8. Add permission to run ./db-migrate.sh with `chmod +x ./db-migrate.sh
 
-9. Run all migrations with `./db-migrate.sh up`
+9. Create the .env file like below, and fill in the details from your Cloudinary and Stripe account.
+```
+CLOUDINARY_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_SECRET=
+CLOUDINARY_UPLOAD_PRESET=
+DB_DRIVER=mysql
+DB_PASSWORD=bar
+DB_USER=foo
+DB_DATABASE=organic
+DB_HOST=localhost
+STRIPE_PUBLISHABLE_KEY=
+STRIPE_SECRET_KEY=
+STRIPE_SUCCESS_URL=
+STRIPE_CANCEL_URL=
+```
 
-10. Add in dummy categories, brands and products as needed.
+10. Run all migrations with `./db-migrate.sh up`
+
+11. Add in dummy categories, brands and products as needed.
 
 
