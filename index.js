@@ -126,6 +126,10 @@ const cloudinaryRoutes = require('./routes/cloudinary');
 const cartRoutes = require('./routes/cart');
 const checkoutRoutes = require('./routes/checkout');
 
+const api = {
+  'products': require('./routes/api/products')
+}
+
 async function main() {
     app.use('/', landingRoutes);
     // the first parameter is the prefix
@@ -135,6 +139,9 @@ async function main() {
     app.use('/cloudinary', cloudinaryRoutes);
     app.use('/cart', cartRoutes);
     app.use('/checkout', checkoutRoutes);
+
+    // register API routes
+    app.use('/api/products', api.products);
 }
 
 main();

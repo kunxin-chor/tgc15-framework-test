@@ -1,5 +1,12 @@
 const { Product, Category, Tag } = require('../models')
 
+async function getAllProducts() {
+    // when using the model as a class, we are referring
+    // to the entire table
+    let products = await Product.fetchAll();
+    return products;
+}
+
 async function getProductById(productId) {
     const product = await Product.where({
         'id': productId
@@ -36,4 +43,4 @@ async function createProduct(productData) {
     return newProduct;
 }
 
-module.exports = { getProductById, getAllCategories, getAllTags, createProduct}
+module.exports = { getProductById, getAllCategories, getAllTags, createProduct, getAllProducts}
