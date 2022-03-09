@@ -2,8 +2,11 @@ const express = require("express");
 const hbs = require("hbs");
 const wax = require("wax-on");
 const csrf = require('csurf'); // protection vs. CRSF attacks
+const cors = require('cors'); // enable cross origin resource sharing
       
 require("dotenv").config();
+
+
 
 
 // setup sessions and flash messaging
@@ -23,6 +26,9 @@ app.use(express.static("public"));
 // setup wax-on
 wax.on(hbs.handlebars);
 wax.setLayoutPath("./views/layouts");
+
+// enable cors before sessions
+app.use(cors());
 
 // enable forms
 // this is a middleware that enables us to
