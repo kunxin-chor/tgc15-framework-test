@@ -25,6 +25,7 @@
     "csurf": "^1.11.0",
     "db-migrate": "^0.11.13",
     "db-migrate-mysql": "^2.2.0",
+    "db-migrate-pg": "^1.2.2",
     "dotenv": "^16.0.0",
     "express": "^4.17.2",
     "express-session": "^1.17.2",
@@ -33,6 +34,7 @@
     "jsonwebtoken": "^8.5.1",
     "knex": "^1.0.2",
     "mysql": "^2.18.1",
+    "pg": "^8.7.3",
     "session-file-store": "^1.5.0",
     "stripe": "^8.203.0",
     "wax-on": "^1.2.2"
